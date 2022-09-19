@@ -1,11 +1,7 @@
-import bs4
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup 
 import requests
+res= requests.get('https://wolt.com/az/aze/baku/restaurant/qutabxana')
 
-url = "https://wolt.com/en/aze/baku/restaurant/meatadore"
-result = requests.get(url)
-
-doc = BeautifulSoup(result.text, "html.parser")
-prods = doc.find_all(text="Coca-Cola ®")
-
-print(prods)
+soup = BeautifulSoup(res.content,"html.parser")
+for title in soup.select('[class="MenuItem-module__content___mNrbB"] p'):
+    print(title.text)

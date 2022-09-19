@@ -1,0 +1,100 @@
+TITLE:
+Qutabxana
+
+
+CATEGORY:BİZNES LANÇ 
+
+  PRODUCT:Lanç Menyu
+      DESCRIPTION:Ət qutabı (5 əd.) + kartoflu pirojki (5 əd.) + Coca-Cola® 500 ml
+
+
+
+CATEGORY:QUTABLAR
+
+  PRODUCT:Qarın Qutabı
+      DESCRIPTION:Qarın, qursaq, iç piyi, duz, istiot
+
+  PRODUCT:Göy Qutabı
+      DESCRIPTION:İspanaq, keşniş, cincilim, gicitkən, turşəng, kəvər, soğan göy
+
+  PRODUCT:Balqabaq Qutabı
+      DESCRIPTION:Balqabaq
+
+  PRODUCT:Pendirli Göy Qutabı
+      DESCRIPTION:Ağ pendir, göyərtilər
+
+  PRODUCT:Pendir Qutabı
+      DESCRIPTION:Ağ pendir
+
+  PRODUCT:Ət Qutabı
+      DESCRIPTION:Ət, quyruq, duz istiot
+
+  PRODUCT:Kartof Qutabı
+      DESCRIPTION:Kartof pure
+
+  PRODUCT:Sarı Noxud Qutabı
+      DESCRIPTION:Noxud puresi
+
+  PRODUCT:Pendirli (Holland) Qutab
+      DESCRIPTION:Holland pendiri
+
+  PRODUCT:Ətli və Holland Pendiri ilə Qutab
+      DESCRIPTION:Ət ve holland pendiri
+
+
+
+CATEGORY:PİROJKİ
+
+  PRODUCT:Kartoflu Pirojki
+      DESCRIPTION:Kartof pure
+
+  PRODUCT:Ciyər ilə Pirojki
+      DESCRIPTION:Ağ və qara ciyər
+
+  PRODUCT:Ətli Pirojki
+      DESCRIPTION:Ət
+
+  PRODUCT:Sarı Noxud ilə Pirojki
+      DESCRIPTION:Noxud
+
+  PRODUCT:Cemli Ponçik
+      DESCRIPTION:Alma cemi
+
+  PRODUCT:Sosis ilə Pirojki
+      DESCRIPTION:N/A
+
+
+
+CATEGORY:BLİNÇİK
+
+  PRODUCT:Ətli Blinçik
+      DESCRIPTION:Ət, düyü
+
+  PRODUCT:Kəsmikli Blinçik
+      DESCRIPTION:Kəsmik
+
+  PRODUCT:Kartoflu Blinçik
+      DESCRIPTION:Kartof
+
+
+
+CATEGORY:SOUSLAR
+
+  PRODUCT:Acika
+      DESCRIPTION:Tomat, duz, istiot
+
+
+
+CATEGORY:İÇKİLƏR
+
+  PRODUCT:Ayran Ev Sayağı
+      DESCRIPTION:N/A
+
+  PRODUCT:Fanta® 500 ml
+      DESCRIPTION:N/A
+
+  PRODUCT:Pepsi® 500 ml
+      DESCRIPTION:N/A
+
+  PRODUCT:Coca-Cola® 500 ml
+      DESCRIPTION:N/A

@@ -28,6 +28,7 @@ if os.path.isdir(title):
 else:
     os.mkdir(title)
 
+
 with open(title+"\list.txt","w") as f:
     f.write("TITLE:")
     f.write("\n"+title)
