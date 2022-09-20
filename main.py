@@ -1,11 +1,10 @@
-from asyncore import loop
 from urllib.parse import urlparse, unquote
 from bs4 import BeautifulSoup
 from pathlib import PurePosixPath
 import urllib.request, requests, json
 
 
-url = "https://wolt.com/en/aze/baku/restaurant/meatadore"
+url = "..."
 result = requests.get(url)
 doc = BeautifulSoup(result.content, "html.parser")
 
@@ -27,9 +26,9 @@ dataURL = "https://restaurant-api.wolt.com/v4/venues/slug/" + urltitle + "/menu"
 with urllib.request.urlopen(dataURL) as url:
     data = json.load(url)
 
-
     # Get categories
     categories = data["categories"]
+
     # Get products
     items = data["items"]
 
@@ -75,4 +74,4 @@ with urllib.request.urlopen(dataURL) as url:
             f.write("\n" * 4)
             itemindex += 1
     
-    print("COMPLETED: Check 'list.txt'")
+    print("COMPLETED:\n     Created 'list.txt'")
