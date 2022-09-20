@@ -1,76 +1,78 @@
-import shutil
+from asyncore import loop
+from urllib.parse import urlparse, unquote
 from bs4 import BeautifulSoup
-import requests
-import os
+from pathlib import PurePosixPath
+import urllib.request, requests, json
+
 
 url = "https://wolt.com/en/aze/baku/restaurant/meatadore"
 result = requests.get(url)
-
 doc = BeautifulSoup(result.content, "html.parser")
 
+title = doc.find("span", class_="VenueHeroBanner__TitleSpan-sc-3gkm9v-2 kCyFrS").string
+urltitle = PurePosixPath(unquote(urlparse(url).path)).parts[5]
 
-title = doc.find("span", class_="VenueHeroBanner__TitleSpan-sc-3gkm9v-2 kCyFrS").string     # Get title of company
+def fixPrice(price):
+    
+    stringPrice = str(price)
 
-cat_index = 0                                                                               # Index of current category
-prod_index = 0                                                                              # Index of current product
+    firstPrice = stringPrice[:-2]
+    lastPrice = "." + stringPrice[-2:]
 
-categories = doc.find_all("h2", class_="MenuCategoryHeader__Heading-sc-1enduc0-0 jwqIkq")   # Get categories of menu
-currentCat = categories[cat_index].parent.parent.parent.parent                              # Get the current indexed category
-products = currentCat.find_all("p", class_="MenuItem-module__name___iqvnU")                 # Get products of current category
-currentProd = currentCat.find_all("p", class_="MenuItem-module__name___iqvnU")[prod_index]  # Get the current indexed product
-desc = currentProd.parent.find("p", class_="MenuItem-module__description___uzvuX")          # Get the description of current product
+    fixedPrice = "AZN " + firstPrice + lastPrice
+    return fixedPrice
 
+dataURL = "https://restaurant-api.wolt.com/v4/venues/slug/" + urltitle + "/menu"
 
-# WRITE TO TEXT FILE
-if os.path.isdir(title):
-    shutil.rmtree(title)
-    os.mkdir(title)
-else:
-    os.mkdir(title)
+with urllib.request.urlopen(dataURL) as url:
+    data = json.load(url)
 
 
-with open(title+"\list.txt","w") as f:
-    # Write company title
-    f.write("TITLE:")
-    f.write("\n"+title)
+    # Get categories
+    categories = data["categories"]
+    # Get products
+    items = data["items"]
 
-    for _ in categories:
-        # Write category name
-        f.write("\n"*3+"CATEGORY:")
-        f.write(categories[cat_index].string + "\n")
+    # Index of current item
+    itemindex = 0
 
-        # Get the products of current category
-        products = currentCat.find_all("p", class_="MenuItem-module__name___iqvnU")
+    # Hold categories in a dictionary
+    categoryID = {}
 
-        for i in products:
-            # Loop through product names and write it
-            f.write("\n"+"  PRODUCT:")
-            f.write(products[prod_index].string)
+    # Create menu categories
+    i = 1
+    for cat in categories:
 
-            # Get current product
-            currentProd = currentCat.find_all("p", class_="MenuItem-module__name___iqvnU")[prod_index]
-            # Check if there is description
-            if currentProd.parent.find("p", class_="MenuItem-module__description___uzvuX"):
-                desc = currentProd.parent.find("p", class_="MenuItem-module__description___uzvuX").find(text=True, recursive=False).rstrip()
+        categoryID[cat["id"]] = cat["name"]
+        i += 1
+
+    # Write to file
+    with open("list.txt", "w") as f:
+        for i in items:
+
+            # Get the current indexed item
+            curritem = items[itemindex]
+
+            curritemCategory = categoryID[curritem["category"]]
+            curritemName = curritem["name"]
+            if curritem["description"]:
+                curritemDescription = curritem["description"]
             else:
-                desc = "N/A"
-
-            # Write the description
-            f.write("\n"+"      DESCRIPTION:")
-            f.write(desc + "\n")
+                curritemDescription = "N/A"
+            curritemNamePrice = fixPrice(curritem["baseprice"])
+            if curritem["image"]:
+                curritemImage = curritem["image"]
+            else:
+                curritemImage = "N/A"
             
-            # Move to the next product index
-            if prod_index+1 != len(products):
-                prod_index += 1
-            else:
-                print("DONE")
-
-        # Move to the next category index
-        if cat_index+1 != len(categories):
-            cat_index += 1
-            prod_index = 0
-        else:
-            print("DONE")
-        
-        # Get current category for next loop
-        currentCat = categories[cat_index].parent.parent.parent.parent
+            f.write("TITLE: " + title + "\n")
+            f.write("CATEGORY: " + curritemCategory + "\n")
+            f.write("PRODUCT: " + curritemName + "\n")
+            f.write("DESCRIPTION: " + curritemDescription + "\n")
+            f.write("PRICE: " + curritemNamePrice + "\n")
+            f.write("IMAGE LINK: " + curritemImage + "\n")
+            
+            f.write("\n" * 4)
+            itemindex += 1
+    
+    print("COMPLETED: Check 'list.txt'")
