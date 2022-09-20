@@ -3,8 +3,9 @@ from bs4 import BeautifulSoup
 from pathlib import PurePosixPath
 import urllib.request, requests, json
 
-
+language = "..."
 url = "..."
+
 result = requests.get(url)
 doc = BeautifulSoup(result.content, "html.parser")
 
@@ -21,7 +22,7 @@ def fixPrice(price):
     fixedPrice = "AZN " + firstPrice + lastPrice
     return fixedPrice
 
-dataURL = "https://restaurant-api.wolt.com/v4/venues/slug/" + urltitle + "/menu"
+dataURL = "https://restaurant-api.wolt.com/v4/venues/slug/" + urltitle + "/menu?language=" + language
 
 with urllib.request.urlopen(dataURL) as url:
     data = json.load(url)
