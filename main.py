@@ -5,7 +5,7 @@ from pathlib import PurePosixPath
 import urllib.request, requests, json
 import mysql.connector as mysql
 
-language = "en"
+language = 'ru'
 url = "https://wolt.com/en/aze/baku/restaurant/meatadore"
 
 result = requests.get(url)
@@ -83,19 +83,12 @@ with urllib.request.urlopen(dataURL) as url:
         else:
             curritemImage = "N/A"
 
-        catIDlist = list(categoryID.keys())
-        catdataID = catIDlist.index(curritem["category"]) + 1
+        cursor.execute("SELECT cat_id FROM qr_catagory_main WHERE (translation='%s') AND (cat_name='%s');"%(language, curritemCategory))
+        catdataID = cursor.fetchall()[0]["cat_id"]
         
         cursor.execute(insert_menu%(catdataID, NULL, dataindexID, curritemName, curritemDescription, curritemNamePrice, curritemImage, NULL, NULL, NULL, language))
-        dataindexID += 1
-        #f.write("TITLE: " + title + "\n")
-        #f.write("CATEGORY: " + curritemCategory + "\n")
-        #f.write("PRODUCT: " + curritemName + "\n")
-        #f.write("DESCRIPTION: " + curritemDescription + "\n")
-        #f.write("PRICE: " + curritemNamePrice + "\n")
-        #f.write("IMAGE LINK: " + curritemImage + "\n")
         
-        #f.write("\n" * 4)
+        dataindexID += 1
         itemindex += 1
 
 db.commit()
