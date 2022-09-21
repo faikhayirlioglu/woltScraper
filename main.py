@@ -64,8 +64,6 @@ with urllib.request.urlopen(dataURL) as url:
     for i in categoryID:
         cursor.execute(insert_category_main%(NULL, categoryID[i], NULL, NULL, NULL, NULL, NULL, language))
 
-    dataindexID = 1
-
     for i in items:
 
         # Get the current indexed item
@@ -86,9 +84,8 @@ with urllib.request.urlopen(dataURL) as url:
         cursor.execute("SELECT cat_id FROM qr_catagory_main WHERE (translation='%s') AND (cat_name='%s');"%(language, curritemCategory))
         catdataID = cursor.fetchall()[0]["cat_id"]
         
-        cursor.execute(insert_menu%(catdataID, NULL, dataindexID, curritemName, curritemDescription, curritemNamePrice, curritemImage, NULL, NULL, NULL, language))
+        cursor.execute(insert_menu%(catdataID, NULL, NULL, curritemName, curritemDescription, curritemNamePrice, curritemImage, NULL, NULL, NULL, language))
         
-        dataindexID += 1
         itemindex += 1
 
 db.commit()
