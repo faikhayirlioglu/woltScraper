@@ -1,10 +1,12 @@
+from asyncio.windows_events import NULL
 from urllib.parse import urlparse, unquote
 from bs4 import BeautifulSoup
 from pathlib import PurePosixPath
 import urllib.request, requests, json
+import mysql.connector as mysql
 
-language = "..."
-url = "..."
+language = "en"
+url = "https://wolt.com/en/aze/baku/restaurant/meatadore"
 
 result = requests.get(url)
 doc = BeautifulSoup(result.content, "html.parser")
@@ -19,7 +21,7 @@ def fixPrice(price):
     firstPrice = stringPrice[:-2]
     lastPrice = "." + stringPrice[-2:]
 
-    fixedPrice = "AZN " + firstPrice + lastPrice
+    fixedPrice = float(firstPrice + lastPrice)
     return fixedPrice
 
 dataURL = "https://restaurant-api.wolt.com/v4/venues/slug/" + urltitle + "/menu?language=" + language
@@ -46,33 +48,54 @@ with urllib.request.urlopen(dataURL) as url:
         categoryID[cat["id"]] = cat["name"]
         i += 1
 
-    # Write to file
-    with open("list.txt", "w") as f:
-        for i in items:
+    # Write to database
+    db = mysql.connect(
+    host='uzeyirxt.beget.tech',
+    user='uzeyirxt_test',
+    passwd='3FvQ*2ps',
+    database='uzeyirxt_test'
+    )
 
-            # Get the current indexed item
-            curritem = items[itemindex]
+    cursor = db.cursor(buffered=True, dictionary=True)
 
-            curritemCategory = categoryID[curritem["category"]]
-            curritemName = curritem["name"]
-            if curritem["description"]:
-                curritemDescription = curritem["description"]
-            else:
-                curritemDescription = "N/A"
-            curritemNamePrice = fixPrice(curritem["baseprice"])
-            if curritem["image"]:
-                curritemImage = curritem["image"]
-            else:
-                curritemImage = "N/A"
-            
-            f.write("TITLE: " + title + "\n")
-            f.write("CATEGORY: " + curritemCategory + "\n")
-            f.write("PRODUCT: " + curritemName + "\n")
-            f.write("DESCRIPTION: " + curritemDescription + "\n")
-            f.write("PRICE: " + curritemNamePrice + "\n")
-            f.write("IMAGE LINK: " + curritemImage + "\n")
-            
-            f.write("\n" * 4)
-            itemindex += 1
+    insert_category_main = "INSERT INTO qr_catagory_main (user_id, cat_name, parent, cat_order, slug, icon, picture, translation) VALUES (%s, '%s', %s, %s, '%s', '%s', '%s', '%s');"
+    insert_menu = "INSERT INTO qr_menu (cat_id, user_id, restro_id, name, description, price, image, type, active, position, translation) VALUES (%s, %s, %s, '%s', '%s', %s, '%s', '%s', '%s', %s, '%s');"
     
-    print("COMPLETED:\n     Created 'list.txt'")
+    for i in categoryID:
+        cursor.execute(insert_category_main%(NULL, categoryID[i], NULL, NULL, NULL, NULL, NULL, language))
+
+    dataindexID = 1
+
+    for i in items:
+
+        # Get the current indexed item
+        curritem = items[itemindex]
+
+        curritemCategory = categoryID[curritem["category"]]
+        curritemName = curritem["name"]
+        if curritem["description"]:
+            curritemDescription = curritem["description"]
+        else:
+            curritemDescription = "N/A"
+        curritemNamePrice = fixPrice(curritem["baseprice"])
+        if curritem["image"]:
+            curritemImage = curritem["image"]
+        else:
+            curritemImage = "N/A"
+
+        catIDlist = list(categoryID.keys())
+        catdataID = catIDlist.index(curritem["category"]) + 1
+        
+        cursor.execute(insert_menu%(catdataID, NULL, dataindexID, curritemName, curritemDescription, curritemNamePrice, curritemImage, NULL, NULL, NULL, language))
+        dataindexID += 1
+        #f.write("TITLE: " + title + "\n")
+        #f.write("CATEGORY: " + curritemCategory + "\n")
+        #f.write("PRODUCT: " + curritemName + "\n")
+        #f.write("DESCRIPTION: " + curritemDescription + "\n")
+        #f.write("PRICE: " + curritemNamePrice + "\n")
+        #f.write("IMAGE LINK: " + curritemImage + "\n")
+        
+        #f.write("\n" * 4)
+        itemindex += 1
+
+db.commit()
